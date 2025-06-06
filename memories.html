@@ -31,27 +31,27 @@
                     return;
                 }
                 
-                // THAY ĐỔI LOGIC HIỂN THỊ
                 querySnapshot.forEach((doc) => {
                     const photoData = doc.data();
 
-                    // Tạo thẻ <a> để link tới ảnh gốc
-                    const link = document.createElement('a');
-                    link.href = photoData.originalUrl;
-                    link.target = "_blank"; // Mở ảnh trong tab mới
+                    // === PHẦN LOGIC ĐÃ ĐƯỢC NÂNG CẤP ===
+                    // Nếu có thumbnailUrl thì dùng, không thì dùng tạm url cũ
+                    const thumbnailUrl = photoData.thumbnailUrl || photoData.url; 
+                    // Tương tự, nếu có originalUrl thì dùng, không thì dùng url cũ
+                    const originalUrl = photoData.originalUrl || photoData.url;
 
-                    // Tạo thẻ <img> với nguồn là ảnh thumbnail
+                    if (!thumbnailUrl) return; // Bỏ qua nếu không có link nào cả
+
+                    const link = document.createElement('a');
+                    link.href = originalUrl;
+                    link.target = "_blank";
+
                     const img = document.createElement('img');
-                    img.src = photoData.thumbnailUrl;
+                    img.src = thumbnailUrl;
                     img.alt = "Kỷ niệm";
-                    
-                    // Thêm thuộc tính lazy loading
                     img.loading = "lazy";
 
-                    // Gắn thẻ <img> vào trong thẻ <a>
                     link.appendChild(img);
-                    
-                    // Gắn thẻ <a> vào album
                     album.appendChild(link);
                 });
 
