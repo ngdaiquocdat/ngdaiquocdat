@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Photo Booth</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #2c3e50;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .booth {
+            border: 10px solid #ecf0f1;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            background-color: #34495e;
+            padding: 20px;
+        }
+        video {
+            display: block;
+            max-width: 100%;
+            border-radius: 4px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            background-color: #f1c40f;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #f39c12;
+        }
+        /* Canvas dùng để chụp ảnh, có thể ẩn đi */
+        canvas {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Web Photo Booth</h1>
+    <div class="booth">
+        <video id="video" width="640" height="480" autoplay></video>
+        <button id="snap">Chụp ảnh</button>
+        <canvas id="canvas" width="640" height="480"></canvas>
+    </div>
+
+    <script>
+        // Lấy các phần tử HTML mà chúng ta cần
+        const video = document.getElementById('video');
+        const snapButton = document.getElementById('snap');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+
+        // Hàm để khởi động webcam
+        async function startWebcam() {
+            try {
+                // Yêu cầu quyền truy cập webcam
+                // 'await' sẽ đợi cho đến khi người dùng đồng ý hoặc từ chối
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                
+                // Nếu thành công, gán luồng video từ webcam vào phần tử <video>
+                video.srcObject = stream;
+            } catch (err) {
+                // Nếu có lỗi (ví dụ: người dùng từ chối), hiển thị thông báo
+                console.error("Ôi, có lỗi!", err);
+                alert("Bạn cần cho phép truy cập webcam để sử dụng tính năng này.");
+            }
+        }
+
+        // Gọi hàm để khởi động webcam ngay khi trang được tải
+        startWebcam();
+        
+        // --- CHỨC NĂNG CHO NÚT "CHỤP ẢNH" SẼ ĐƯỢC THÊM VÀO ĐÂY Ở BƯỚC SAU ---
+
+    </script>
+</body>
+</html>
