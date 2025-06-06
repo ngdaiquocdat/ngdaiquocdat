@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kỷ niệm của bạn</title>
+    <style>
+        /* CSS không đổi */
+        body { background-color: #2c3e50; font-family: Arial, sans-serif; color: white; padding: 40px; margin: 0; }
+        h1 { text-align: center; font-size: 3rem; margin-bottom: 40px; }
+        #album { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+        #album img { width: 300px; height: 225px; object-fit: cover; border: 8px solid white; border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: transform 0.3s; }
+        #album img:hover { transform: scale(1.05); }
+        .message-text { font-size: 1.5em; text-align: center; }
+        .back-link { display: block; text-align: center; margin-top: 40px; font-size: 1.2rem; color: #f1c40f; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>Cuốn Sổ Kỷ Niệm</h1>
+    <div id="album">
+        <p class="message-text">Đang tải kỷ niệm...</p>
+    </div>
+    <a href="photobooth.html" class="back-link">Quay lại chụp ảnh</a>
+
+    <script type="module">
+        // Import các hàm cần thiết từ Firebase SDK v9
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+        // DÙNG firebaseConfig CỦA DỰ ÁN luugiu9a
+        const firebaseConfig = {
+            apiKey: "AIzaSyBglTj7de7IpZUJRQ-tXY7tndZS2KYlFrs",
+            authDomain: "luugiu9a.firebaseapp.com",
+            projectId: "luugiu9a",
+            storageBucket: "luugiu9a.appspot.com",
+            messagingSenderId: "1041953898334",
+            appId: "1:1041953898334:web:41b87b3dbfd32d8b23d9cf"
+        };
+        
+        // Khởi tạo Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Hàm để tải và hiển thị ảnh từ Firestore
+        async function loadMemories() {
+            const album = document.getElementById('album');
+            
+            try {
+                // Tạo câu truy vấn để lấy các tài liệu ảnh từ collection "photos",
+                // sắp xếp theo ngày tạo mới nhất (descending)
+                const photosQuery = query(collection(db, "photos"), orderBy("createdAt", "desc"));
+                
+                // Thực thi câu truy vấn
+                const querySnapshot = await getDocs(photosQuery);
+
+                // Xóa thông báo "Đang tải..."
+                album.innerHTML = ''; 
+
+                if (querySnapshot.empty) {
+                    album.innerHTML = '<p class="message-text">Chưa có kỷ niệm nào được lưu.</p>';
+                    return;
+                }
+
+                // Lặp qua từng tài liệu (từng ảnh) và hiển thị nó
+                querySnapshot.forEach((doc) => {
+                    const photoData = doc.data();
+                    const img = document.createElement('img');
+                    img.src = photoData.url;
+                    album.appendChild(img);
+                });
+
+            } catch (error) {
+                console.error("Lỗi khi tải ảnh từ Firestore:", error);
+                album.innerHTML = '<p class="message-text">Không thể tải được kỷ niệm. Vui lòng thử lại sau.</p>';
+            }
+        }
+        
+        // Chạy hàm này ngay khi trang được tải
+        loadMemories();
+    </script>
+</body>
+</html>
