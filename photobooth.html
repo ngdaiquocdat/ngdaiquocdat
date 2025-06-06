@@ -29,6 +29,9 @@
             display: block;
             max-width: 100%;
             border-radius: 4px;
+            
+            /* --- DÒNG MÃ ĐƯỢC THÊM VÀO ĐỂ FIX LỖI NGƯỢC CAM --- */
+            transform: scaleX(-1); 
         }
         button {
             margin-top: 20px;
@@ -70,14 +73,9 @@
         // Hàm để khởi động webcam
         async function startWebcam() {
             try {
-                // Yêu cầu quyền truy cập webcam
-                // 'await' sẽ đợi cho đến khi người dùng đồng ý hoặc từ chối
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                
-                // Nếu thành công, gán luồng video từ webcam vào phần tử <video>
                 video.srcObject = stream;
             } catch (err) {
-                // Nếu có lỗi (ví dụ: người dùng từ chối), hiển thị thông báo
                 console.error("Ôi, có lỗi!", err);
                 alert("Bạn cần cho phép truy cập webcam để sử dụng tính năng này.");
             }
