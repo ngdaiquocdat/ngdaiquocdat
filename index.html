@@ -3,107 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trình Theo dõi Chỉ số Game</title>
+    <title>VAPE - Trang chủ</title>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* Thiết lập font chữ và nền cơ bản */
-        body {
-            background-color: #121212; /* Nền tối */
-            color: #e0e0e0; /* Chữ màu xám nhạt */
-            font-family: Arial, sans-serif;
+        /* --- Reset và Cài đặt chung --- */
+        * {
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* Căn giữa nội dung chính */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0c0c0e; /* Màu nền đen-xám đậm */
+            color: #f0f0f0; /* Màu chữ trắng ngà */
+            overflow-x: hidden; /* Chống cuộn ngang */
+        }
+
         .container {
-            width: 100%;
-            max-width: 800px;
-            text-align: center;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        header h1 {
-            color: #ffffff;
-            font-size: 2.5em;
-            margin-bottom: 0;
+        a {
+            text-decoration: none;
+            color: inherit;
         }
 
-        header p {
-            color: #bbbbbb;
-            font-size: 1.2em;
+        /* --- Header và Thanh điều hướng --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 0;
+            border-bottom: 1px solid #2a2a2a;
         }
 
-        /* Phần hộp tìm kiếm */
-        .search-box {
-            margin-top: 30px;
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        nav ul {
+            display: flex;
+            align-items: center;
+            list-style: none;
+            gap: 35px;
+        }
+
+        nav a {
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #00bcd4; /* Màu xanh cyan khi hover */
+        }
+
+        .btn {
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
+            background-color: #00bcd4;
+            color: #0c0c0e;
+        }
+
+        /* --- Nội dung chính --- */
+        main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 80vh;
+            padding: 50px 0;
+            gap: 40px;
+        }
+
+        .text-content {
+            flex-basis: 50%;
+        }
+
+        .text-content h1 {
+            font-size: 4.5rem; /* Cỡ chữ rất lớn */
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .text-content p {
+            font-size: 1.1rem;
+            color: #a0a0a0; /* Màu chữ phụ xám hơn */
+            max-width: 450px;
+            margin-bottom: 40px;
+        }
+
+        .button-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-secondary {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-secondary:hover {
+            color: #00bcd4;
+        }
+
+        .image-content {
+            flex-basis: 50%;
             display: flex;
             justify-content: center;
+            align-items: center;
         }
 
-        .search-box input {
-            width: 60%;
-            padding: 15px;
-            font-size: 1em;
-            border: 1px solid #333;
-            background-color: #222;
-            color: #fff;
-            border-radius: 5px 0 0 5px; /* Bo tròn góc trái */
+        .image-content img {
+            max-width: 100%;
+            height: auto;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Hiệu ứng bay lơ lửng cho ảnh */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
         }
 
-        .search-box button {
-            padding: 15px 20px;
-            font-size: 1em;
-            border: none;
-            background-color: #e44d26; /* Màu cam-đỏ */
-            color: white;
-            cursor: pointer;
-            border-radius: 0 5px 5px 0; /* Bo tròn góc phải */
-            transition: background-color 0.3s;
-        }
-
-        .search-box button:hover {
-            background-color: #f55a35;
-        }
-
-        /* Khu vực hiển thị kết quả */
-        .stats-results {
-            margin-top: 40px;
-            padding: 20px;
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 5px;
-            min-height: 200px;
-            text-align: left;
-        }
-
-        .placeholder-text {
-            color: #777;
-            text-align: center;
-            padding-top: 50px;
-        }
     </style>
 </head>
 <body>
+
     <div class="container">
         <header>
-            <h1>GAME STATS TRACKER</h1>
-            <p>Nhập tên người chơi để xem chỉ số</p>
+            <div class="logo">VAPE</div>
+            <nav>
+                <ul>
+                    <li><a href="#">Forums</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">♙ Login</a></li>
+                    <li><a href="#" class="btn btn-primary">Buy now</a></li>
+                </ul>
+            </nav>
         </header>
 
         <main>
-            <div class="search-box">
-                <input type="text" placeholder="Tên người chơi#Tagline">
-                <button>Tìm kiếm</button>
+            <div class="text-content">
+                <h1>Like steroids for Minecraft.</h1>
+                <p>Get an unfair advantage over your opponents, while remaining completely undetected</p>
+                <div class="button-group">
+                    <a href="#" class="btn btn-primary">Buy now</a>
+                    <a href="#" class="btn-secondary">Learn more ▸</a>
+                </div>
             </div>
 
-            <div class="stats-results">
-                <p class="placeholder-text">Vui lòng tìm kiếm một người chơi để bắt đầu.</p>
+            <div class="image-content">
+                <img src="https://placehold.co/500x500/0c0c0e/00bcd4?text=Your+Image+Here&font=poppins" alt="Nhân vật game cầm kiếm">
             </div>
         </main>
     </div>
+
 </body>
 </html>
