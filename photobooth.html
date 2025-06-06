@@ -19,13 +19,24 @@
         h1 {
             margin-bottom: 20px;
         }
+
+        /* --- THÙNG CHỨA CHÍNH CHO BỐ CỤC 2 CỘT --- */
+        .main-container {
+            display: flex;
+            align-items: flex-start; /* Căn các cột theo đỉnh */
+            gap: 30px; /* Khoảng cách giữa 2 cột */
+        }
+
         .booth {
-            position: relative; /* Cần thiết cho việc định vị div đếm ngược */
+            position: relative;
             border: 10px solid #ecf0f1;
             border-radius: 8px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
             background-color: #34495e;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         video {
             display: block;
@@ -33,9 +44,10 @@
             border-radius: 4px;
             transform: scaleX(-1); 
         }
-        button {
+        button#snap {
             margin-top: 20px;
             padding: 15px 30px;
+            width: 100%;
             font-size: 1.2rem;
             font-weight: bold;
             color: #2c3e50;
@@ -45,10 +57,10 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        button:hover:not(:disabled) {
+        button#snap:hover:not(:disabled) {
             background-color: #f39c12;
         }
-        button:disabled {
+        button#snap:disabled {
             background-color: #7f8c8d;
             cursor: not-allowed;
         }
@@ -56,9 +68,10 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            display: none; /* Mặc định ẩn đi */
+            width: calc(100% - 40px); /* Trừ đi padding của .booth */
+            height: calc(100% - 125px); /* Trừ padding và nút bấm */
+            margin: 20px;
+            display: none;
             justify-content: center;
             align-items: center;
             font-size: 12rem;
@@ -66,13 +79,19 @@
             color: white;
             text-shadow: 0 0 15px rgba(0,0,0,0.7);
             background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
         }
+        
+        /* --- KHU VỰC HIỂN THỊ ẢNH (CỘT BÊN PHẢI) --- */
         #photo-gallery {
-            margin-top: 20px;
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-direction: column; /* Xếp ảnh theo chiều dọc */
             gap: 15px;
+            background-color: #34495e;
+            padding: 15px;
+            border-radius: 8px;
+            border: 5px solid #ecf0f1;
+            min-height: 500px;
         }
         #photo-gallery img {
             width: 200px;
@@ -89,17 +108,23 @@
 <body>
 
     <h1>Web Photo Booth</h1>
-    <div class="booth">
-        <video id="video" width="640" height="480" autoplay></video>
-        <div id="countdown"></div>
+
+    <div class="main-container">
+        
+        <div class="booth">
+            <video id="video" width="640" height="480" autoplay></video>
+            <div id="countdown"></div>
+            <button id="snap">Chụp ảnh 3 tấm</button>
+        </div>
+
+        <div id="photo-gallery">
+            </div>
+
     </div>
-    <button id="snap">Chụp ảnh 3 tấm</button>
-    
-    <div id="photo-gallery"></div>
-    
     <canvas id="canvas" width="640" height="480"></canvas>
 
     <script>
+        // --- TOÀN BỘ PHẦN JAVASCRIPT GIỮ NGUYÊN NHƯ CŨ, KHÔNG THAY ĐỔI GÌ ---
         const video = document.getElementById('video');
         const snapButton = document.getElementById('snap');
         const canvas = document.getElementById('canvas');
@@ -117,35 +142,26 @@
             }
         }
         
-        // Hàm tiện ích để "ngủ"
         const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
         function takePhoto() {
-            // Lật canvas theo chiều ngang để ảnh chụp ra giống hệt video (đang bị lật)
-            context.save(); // Lưu lại trạng thái context hiện tại
+            context.save();
             context.scale(-1, 1);
             context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
-            context.restore(); // Khôi phục lại trạng thái context
+            context.restore();
 
-            // Tạo dữ liệu ảnh từ canvas
             const imageData = canvas.toDataURL('image/jpeg');
             
-            // Tạo thẻ <img> mới và hiển thị trong gallery
             const img = document.createElement('img');
             img.src = imageData;
             photoGallery.appendChild(img);
         }
 
         async function photoSequence() {
-            // Vô hiệu hóa nút bấm để tránh người dùng nhấn nhiều lần
             snapButton.disabled = true;
-            
-            // Xóa các ảnh cũ (nếu có)
             photoGallery.innerHTML = ''; 
 
-            // Vòng lặp 3 lần để chụp 3 tấm ảnh
             for (let i = 0; i < 3; i++) {
-                // Bắt đầu đếm ngược
                 countdownDisplay.style.display = 'flex';
                 
                 countdownDisplay.textContent = '3';
@@ -157,25 +173,18 @@
                 countdownDisplay.textContent = '1';
                 await sleep(1000);
 
-                // Ẩn số đếm ngược và chụp ảnh
                 countdownDisplay.style.display = 'none';
                 takePhoto();
                 
-                // Chờ một chút trước khi bắt đầu vòng lặp tiếp theo (nếu có)
                 if (i < 2) {
                     await sleep(1000);
                 }
             }
-
-            // Kích hoạt lại nút bấm sau khi hoàn thành
             snapButton.disabled = false;
         }
 
         startWebcam();
-        
-        // Gắn sự kiện click vào nút bấm để gọi chuỗi hành động chụp ảnh
         snapButton.addEventListener('click', photoSequence);
-
     </script>
 </body>
 </html>
